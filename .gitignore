@@ -1,0 +1,19 @@
+*.log
+*.orig
+*.pyc
+*.pyo
+/.virtualenv*/
+/venv/
+/.idea/
+/__pycache__/
+
+# setuptools
+AUTHORS
+ChangeLog
+/*egg*/
+/build/
+/dist/
+/doc/build/
+
+# tox
+/.tox/
