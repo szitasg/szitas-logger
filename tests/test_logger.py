@@ -12,7 +12,7 @@ from szitas_logger.logger import Logger
 
 class TestLogger(unittest.TestCase):
 
-    LOG_FILE = '.tox/logger.log'
+    LOG_FILE = 'report/logger.log'
 
     @classmethod
     def setUpClass(cls):
@@ -28,8 +28,8 @@ class TestLogger(unittest.TestCase):
         self.message = str(random.getrandbits(2048))
 
     def _read_last_word(self):
-        with open(TestLogger.LOG_FILE) as input:
-            return input.read()
+        with open(TestLogger.LOG_FILE) as log_file:
+            return log_file.read()
 
     def test_debug(self):
         self.log.debug(self.message)
@@ -51,6 +51,23 @@ class TestLogger(unittest.TestCase):
         before = self._read_last_word()
         self.log.debug('')
         self.assertTrue(before == self._read_last_word())
+
+    def test_multiline_message(self):
+        self.message = f'first\nsecond\n\nthird\n{self.message}'
+        self.log.debug(self.message)
+
+        for message in self.message.split('\n'):
+            self.assertTrue(message in self._read_last_word())
+
+    def test_multiline_message_with_empty(self):
+        self.message = f'{self.message}\n'
+        self.log.debug(self.message)
+        self.assertTrue(self.message in self._read_last_word())
+
+    def test_none(self):
+        self.message = 'None'
+        self.log.debug(self.message)
+        self.assertTrue(self.message not in self._read_last_word())
 
     def test_timer(self):
         wait = 1.5

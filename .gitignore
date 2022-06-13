@@ -2,18 +2,12 @@
 *.orig
 *.pyc
 *.pyo
-/.virtualenv*/
-/venv/
 /.idea/
 /__pycache__/
 
-# setuptools
-AUTHORS
-ChangeLog
-/*egg*/
-/build/
-/dist/
-/doc/build/
-
-# tox
-/.tox/
+# pytest
+/.pytest_cache/
+/htmlcov/
+/report/
+.coverage
+coverage.xml
