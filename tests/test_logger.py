@@ -12,7 +12,7 @@ from szitas_logger.logger import Logger
 
 class TestLogger(unittest.TestCase):
 
-    LOG_FILE = 'report/logger.log'
+    LOG_FILE = '.pytest/test_logger.log'
 
     @classmethod
     def setUpClass(cls):
@@ -70,14 +70,18 @@ class TestLogger(unittest.TestCase):
         self.assertTrue(self.message not in self._read_last_word())
 
     def test_timer(self):
-        wait = 1.5
+        wait = 0.1
 
         self.log.timer_start()
         time.sleep(wait)
         self.log.timer_end()
 
-        self.assertTrue(f'Elapsed time 0:00:{wait:05.2f}'
+        self.assertTrue(f'Elapsed time 0:00:{wait:04.1f}'
                         in self._read_last_word())
+
+    def test_reset_handler(self):
+        Logger(log_file=TestLogger.LOG_FILE, log_file_mode='a').reset_handlers()
+        self.assertTrue('Reset handlers' in self._read_last_word())
 
 
 if __name__ == '__main__':

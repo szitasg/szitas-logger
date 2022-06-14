@@ -60,6 +60,7 @@ class Logger(object):
     class FileHandler(logging.FileHandler):
 
         def __init__(self, filename, mode='a', encoding=None, delay=0):
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
             super(Logger.FileHandler, self).__init__(filename,
                                                      mode,
                                                      encoding,
@@ -126,6 +127,9 @@ class Logger(object):
 
     def reset_handlers(self):
         handlers = self.log.handlers[:]
+
+        self.log.debug(f'Reset handlers {handlers}')
+
         for handler in handlers:
             handler.close()
             self.log.removeHandler(handler)

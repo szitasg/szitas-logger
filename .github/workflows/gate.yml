@@ -37,17 +37,17 @@ jobs:
 
       - name: Test with pytest
         run: |
-          mkdir report
-          pytest tests/ --doctest-modules --junitxml=report/${{ matrix.os }}-${{ matrix.python-version }}/junit.xml --cov=szitas_logger --cov-branch --cov-report=xml --cov-report=html
-          mv htmlcov/* report/${{ matrix.os }}-${{ matrix.python-version }}/
-          mv report/*.log report/${{ matrix.os }}-${{ matrix.python-version }}/
-          mv *coverage* report/${{ matrix.os }}-${{ matrix.python-version }}/
+          pytest tests/ --doctest-modules --junitxml=.pytest/junit.xml --cov-report=xml --cov-report=term --cov-report=html --cov=szitas_logger -v tests
+
+          mkdir .artifact
+          mv .pytest .artifact/${{ matrix.os }}-${{ matrix.python-version }}
+          mv .coverage .artifact/${{ matrix.os }}-${{ matrix.python-version }}/
 
       - name: Upload pytest results
         uses: actions/upload-artifact@v3
         with:
-          name: pytest-results
-          path: report
+          name: gate-artifact
+          path: .artifact
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
 

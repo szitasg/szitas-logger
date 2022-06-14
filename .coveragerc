@@ -1,0 +1,18 @@
+[run]
+branch = True
+
+[report]
+exclude_lines =
+    if __name__ == .__main__.:
+;fail_under = 90
+ignore_errors = True
+omit = tests*,*site-packages*,setup.py,*__init__*
+precision = 2
+skip_empty = False
+show_missing = True
+
+[html]
+directory = ./.pytest/coverage/
+
+[xml]
+output = ./.pytest/coverage.xml
