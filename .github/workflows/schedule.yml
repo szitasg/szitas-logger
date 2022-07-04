@@ -1,0 +1,22 @@
+name: Schedule
+on:
+  schedule:
+    - cron: '0 0 * * *'
+env:
+  FORCE_COLOR: 1
+jobs:
+  retain-workflows:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+    steps:
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 30
+          keep_minimum_runs: 5

@@ -1,48 +1,67 @@
 name: Gate
-
-on: [push, pull_request, workflow_dispatch]
-
+on:
+  - push
+  - pull_request
+  - workflow_dispatch
 env:
   FORCE_COLOR: 1
-
 jobs:
-  gate:
+  gate-lint:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ["3.6", "3.10"]
+        os:
+          - ubuntu-latest
+        python-version:
+          - '3.10'
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade --progress-bar=off -r requirements_gate.txt
           pip --version
-
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
+  gate-test:
+    needs: gate-lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - '3.6'
+          - '3.10'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade --progress-bar=off -r requirements_gate.txt
+          pip --version
       - name: Test with pytest
         run: |
           pytest tests/ --doctest-modules --junitxml=.pytest/junit.xml --cov-report=xml --cov-report=term --cov-report=html --cov=szitas_logger -v tests
-
           mkdir .artifact
           mv .pytest .artifact/${{ matrix.os }}-${{ matrix.python-version }}
           mv .coverage .artifact/${{ matrix.os }}-${{ matrix.python-version }}/
-
       - name: Upload pytest results
         uses: actions/upload-artifact@v3
         with:
@@ -50,7 +69,6 @@ jobs:
           path: .artifact
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

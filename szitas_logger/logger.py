@@ -102,10 +102,11 @@ class Logger(object):
         self.log.debug('Timer start')
 
     def log_timer_end(self):
-        self.stop_time = datetime.datetime.utcnow()
+        stop_time = datetime.datetime.utcnow()
         if self.start_time and self.log:
             self.log.debug('Timer end')
-            self.log.info(f'Elapsed time {self.stop_time - self.start_time}')
+            self.log.info(f'Elapsed time {stop_time - self.start_time}')
+        self.start_time = None
 
     def __set_handlers(self):
         fh = Logger.FileHandler(self.log_file, mode=self.log_file_mode)
