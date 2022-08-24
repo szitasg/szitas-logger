@@ -2,4 +2,7 @@
 
 # szitas-logger
 
-TBD
+This project is my japl (just another python logger) project which I'm using for
+years but newer goes to public.
+
+License: Apache License, Version 2.0
